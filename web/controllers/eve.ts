@@ -5,6 +5,7 @@ import * as corporation from "../models/eve/corporation.js"
 import * as destination from "../models/eve/destinations.js"
 import { eveAuth } from "../middlewares/eve.js"
 import * as eveHelpers from "../helpers/eve.js"
+import { pricing } from "../helpers/pricing.js"
 import { Request, Response, Router } from "express"
 import * as invmarketgroups from "../models/eve/invmarketgroups.js"
 import * as invtypes from "../models/eve/invtypes.js"
@@ -236,6 +237,11 @@ export function init(): void {
       quote: (price * 1.13 * multiplier).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       quoteShort: eveHelpers.nShortener(price * 1.13 * multiplier, 2)
     })
+  })
+
+  router.post("/quote", async function(req: Request, res: Response): Promise<void> {
+    const result = await pricing.calculate(req.body);
+    res.json(result);
   })
 
   router.post("/submit", async function(req: Request, res: Response) : Promise<void> {
