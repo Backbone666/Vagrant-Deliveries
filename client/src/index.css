@@ -1,90 +1,68 @@
-html, body, #root {
-  height: 100%
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.index-template {
-  padding: 40px 15px;
-  text-align: center;
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
 }
 
-.error-template {
-  padding: 40px 15px;
-  text-align: center;
-}
-
-.error-actions {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-
-.error-actions .btn {
-  margin-right: 10px;
-}
-
-.navbar-right li a {
-  text-align: right;
-}
-
-.tooltip-inner {
-  white-space: pre-wrap;
-}
-
-.destination-image {
-  padding: 0px;
-}
-
-.character-image {
-  height: 50px;
-}
-
-.loader {
-  height: 100%;
-  width: 100%;
+body {
+  margin: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-.loader-wheel {
-  animation: spin 1s infinite linear;
-  border: 2px solid #fff;
-  border-left: 4px solid rgb(30, 30, 30, 0.5);
-  border-radius: 50%;
-  height: 50px;
-  margin-bottom: 10px;
-  width: 50px;
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
-.loader-text {
-  font-family: arial, sans-serif;
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
-.loader-text:after {
-  content: 'Loading';
-  animation: load 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
   }
-  100% {
-    transform: rotate(360deg);
+  a:hover {
+    color: #747bff;
   }
-}
-
-@keyframes load {
-  0% {
-    content: 'Loading';
-  }
-  25% {
-    content: 'Loading.';
-  }
-  50% {
-    content: 'Loading..';
-  }
-  75% {
-    content: 'Loading...';
+  button {
+    background-color: #f9f9f9;
   }
 }
