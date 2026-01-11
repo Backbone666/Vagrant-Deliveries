@@ -1,14 +1,17 @@
-# Mango Deliveries
+# Vagrant Logistics (VGLGI)
+**Version:** 2.0.0
+**Last Updated:** 2026-01-11
+
 ## About
-Mango Deliveries is a freighting website for EVE Online.
+Vagrant Logistics (VGLGI) is a modernised freighting platform for EVE Online, based on the Mango Deliveries project. "Neutral Space Trucking since YC117.06.19".
 
 ## Setup
 1. Clone this repository.
 2. Run `npm install`
 3. Go to https://developers.eveonline.com/ and create an application.
-4. Set "Connection Type" to "Authentication Only" and "Callback URL" to the url that users will be redirected to after login (locally `http://localhost:3000/callback` for development).
+4. Set "Connection Type" to "Authentication Only" and "Callback URL" to the url that users will be redirected to after login (locally `http://localhost:5173/callback` for development).
 5. Create a .env file at the root of the project that sets the required environment variables below (see .env.example).
-4. Run `npm run dev` to run both the express back-end and react front-end.
+4. Run `npm run dev` to run both the express back-end and Vite front-end.
 
 ## Environment variables
 ### Required
