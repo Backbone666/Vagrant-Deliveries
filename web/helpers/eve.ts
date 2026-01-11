@@ -7,7 +7,7 @@ import * as invmarketgroups from "../models/eve/invmarketgroups.js"
 import * as invtypes from "../models/eve/invtypes.js"
 import * as invvolumes from "../models/eve/invvolumes.js"
 import moment from "moment-timezone"
-import request from "request-promise"
+import axios from "axios"
 import * as settings from "../models/eve/settings.js"
 import { parse } from "url"
 import { isUri } from "valid-url"
@@ -120,8 +120,8 @@ export async function validateAppraisal(query: ParsedQs): Promise<AppraisalRespo
     }
 
     const response: AppraisalResponse = { invalid: {} }
-    const body = await request.get(`${link.href}.json`)
-    const appraisal: AppraisalJson = JSON.parse(body)
+    const axiosResponse = await axios.get<AppraisalJson>(`${link.href}.json`)
+    const appraisal: AppraisalJson = axiosResponse.data
 
     const promises = await Promise.all([
       filterBannedItemTypes(appraisal),

@@ -9,7 +9,7 @@ import { Request, Response, Router } from "express"
 import * as invmarketgroups from "../models/eve/invmarketgroups.js"
 import * as invtypes from "../models/eve/invtypes.js"
 import moment from "moment-timezone"
-import request from "request-promise"
+import axios from "axios"
 import * as settings from "../models/eve/settings.js"
 import crypto from "crypto"
 import { env } from "../env/index.js"
@@ -69,109 +69,105 @@ export function init(): void {
       return
     }
 
-    let body = await request.post({
-      headers: {
-        "Authorization": `Basic ${new Buffer(`${env("EVE_ID")}:${env("EVE_SECRET")}`).toString("base64")}`
-      },
-      url: "https://login.eveonline.com/oauth/token",
-      form: {
-        "grant_type": "authorization_code",
-        "code": req.query.code
+    try {
+      const auth = Buffer.from(`${env("EVE_ID")}:${env("EVE_SECRET")}`).toString("base64")
+      const tokenResponse = await axios.post("https://login.eveonline.com/oauth/token",
+        new URLSearchParams({
+          "grant_type": "authorization_code",
+          "code": req.query.code as string
+        }), {
+          headers: {
+            "Authorization": `Basic ${auth}`,
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        })
+
+      const token = tokenResponse.data.access_token
+
+      const verifyResponse = await axios.get("https://login.eveonline.com/oauth/verify", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+
+      const id = verifyResponse.data.CharacterID
+
+      const [charResponse, portraitResponse] = await Promise.all([
+        axios.get(`https://esi.evetech.net/latest/characters/${id}/`),
+        axios.get(`https://esi.evetech.net/latest/characters/${id}/portrait/`)
+      ])
+
+      const charInfo = charResponse.data
+      const name = charInfo.name
+      const portrait = portraitResponse.data.px64x64.replace(/^http:\/\//i, "https://")
+      const birthday = moment(charInfo.birthday).format("YYYY-MM-DD HH:mm:ss")
+      const allianceId = charInfo.alliance_id
+      const corporationId = charInfo.corporation_id
+
+      let corpResponse, corpIconResponse, allianceResponse, allianceIconResponse
+
+      if (allianceId === undefined) {
+        [corpResponse, corpIconResponse] = await Promise.all([
+          axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
+          axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`)
+        ])
+      } else {
+        [corpResponse, corpIconResponse, allianceResponse, allianceIconResponse] = await Promise.all([
+          axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
+          axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`),
+          axios.get(`https://esi.evetech.net/latest/alliances/${allianceId}/`),
+          axios.get(`https://esi.evetech.net/latest/alliances/${allianceId}/icons/`)
+        ])
       }
-    })
 
-    body = JSON.parse(body)
-    const token = body.access_token
+      const corporationName = corpResponse.data.name
+      const corporationPortrait = corpIconResponse.data.px64x64.replace(/^http:\/\//i, "https://")
+      let allianceName: string | undefined = undefined
+      let alliancePortrait: string | undefined = undefined
 
-    body = await request.get({
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      url: "https://login.eveonline.com/oauth/verify"
-    })
+      if (allianceResponse && allianceIconResponse) {
+        allianceName = allianceResponse.data.name
+        alliancePortrait = allianceIconResponse.data.px64x64.replace(/^http:\/\//i, "https://")
+      }
 
-    body = JSON.parse(body)
-    const id = body.CharacterID
+      const attributes: character.EveCharacterAttributes = {
+        id: id,
+        token: token,
+        characterName: name,
+        characterPortrait: portrait,
+        characterBirthday: birthday,
+        corporationId: corporationId,
+        corporationName: corporationName,
+        corporationPortrait: corporationPortrait,
+        allianceId: allianceId,
+        allianceName: allianceName,
+        alliancePortrait: alliancePortrait,
+        freighter: false,
+        director: false
+      }
 
-    body = await Promise.all([
-      request.get(`https://esi.evetech.net/latest/characters/${body.CharacterID}/`),
-      request.get(`https://esi.evetech.net/latest/characters/${body.CharacterID}/portrait/`)
-    ])
+      const eveCharacter = (await character.set(attributes))[0]
 
-    for (const index in body) {
-      const currentBody = body[index]
-      body[index] = JSON.parse(currentBody)
+      const userBanned = await character.isBanned(eveCharacter.characterName)
+      const allianceAllowed = eveCharacter.allianceName
+        ? await alliance.isAllowed(eveCharacter.allianceName)
+        : true
+      const corporationAllowed = await corporation.isAllowed(eveCharacter.corporationName)
+      const isDirector = eveCharacter.director
+      const isFreighter = eveCharacter.freighter
+      const isAllowed = !userBanned && (allianceAllowed || corporationAllowed || isDirector || isFreighter)
+
+      if (!isAllowed) {
+        res.redirect("/unauthorized")
+        return
+      }
+
+      req.session.character = eveCharacter
+      res.redirect("/")
+    } catch (error) {
+      console.error("Login callback error:", error)
+      res.sendStatus(500)
     }
-
-    const name = body[0].name
-    const portrait = body[1].px64x64.replace(/^http:\/\//i, "https://")
-    const birthday = moment(body[0].birthday).format("YYYY-MM-DD HH:mm:ss")
-    const allianceId = body[0].alliance_id
-    const corporationId = body[0].corporation_id
-
-    if (allianceId === undefined) {
-      body = await Promise.all([
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`)
-      ])
-    } else {
-      body = await Promise.all([
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`),
-        request.get(`https://esi.evetech.net/latest/alliances/${allianceId}/`),
-        request.get(`https://esi.evetech.net/latest/alliances/${allianceId}/icons/`)
-      ])
-    }
-
-    for (const index in body) {
-      const currentBody = body[index]
-      body[index] = JSON.parse(currentBody)
-    }
-
-    const corporationName = body[0].name
-    const corporationPortrait = body[1].px64x64.replace(/^http:\/\//i, "https://")
-    let allianceName: string | undefined = undefined
-    let alliancePortrait: string | undefined = undefined
-
-    if (body.length == 4) {
-      allianceName = body[2].alliance_name
-      alliancePortrait = body[3].px64x64.replace(/^http:\/\//i, "https://")
-    }
-
-    const attributes: character.EveCharacterAttributes = {
-      id: id,
-      token: token,
-      characterName: name,
-      characterPortrait: portrait,
-      characterBirthday: birthday,
-      corporationId: corporationId,
-      corporationName: corporationName,
-      corporationPortrait: corporationPortrait,
-      allianceId: allianceId,
-      allianceName: allianceName,
-      alliancePortrait: alliancePortrait,
-      freighter: false,
-      director: false
-    }
-
-    const eveCharacter = (await character.set(attributes))[0]
-
-    const userBanned = await character.isBanned(eveCharacter.characterName)
-    const allianceAllowed = eveCharacter.allianceName
-      ? await alliance.isAllowed(eveCharacter.allianceName)
-      : true
-    const corporationAllowed = await corporation.isAllowed(eveCharacter.corporationName)
-    const isDirector = eveCharacter.director
-    const isFreighter = eveCharacter.freighter
-    const isAllowed = !userBanned && (allianceAllowed || corporationAllowed || isDirector || isFreighter)
-
-    if (!isAllowed) {
-      res.redirect("/unauthorized")
-      return
-    }
-
-    req.session.character = eveCharacter
-    res.redirect("/")
   })
 
   router.get("/index", async function(req: Request, res: Response): Promise<void> {

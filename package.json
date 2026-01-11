@@ -51,6 +51,7 @@
     "@types/express-session": "^1.18.0",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.24",
+    "@types/valid-url": "1.0.7",
     "@types/validator": "^13.11.9",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
