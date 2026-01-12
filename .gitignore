@@ -20,3 +20,4 @@ dist/
 
 # React
 build/
+job-logs.txt
