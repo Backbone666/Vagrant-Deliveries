@@ -17,6 +17,10 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 *   **Compliance:** GDPR/Privacy policy and CCP Legal Notices.
 
 ## Recent Changes
+**Date:** 2026-01-12
+1.  **CI Fixes**: Resolved significant linting failures in GitHub Actions related to indentation (2 spaces required), quote consistency (double quotes required), and explicit `any` types (forbidden by TS rules).
+2.  **Infrastructure**: Finalized GitHub Actions workflows for CI, Security, Docker Publishing, and Deployment.
+
 **Date:** 2026-01-11
 1.  **Compliance:** Added `LEGAL.md` and `PRIVACY.md` to satisfy CCP Games third-party requirements.
 2.  **Audit Logs:** Implemented `EveContractAudit` model and logging hooks in `web/controllers/eve.ts` and `web/helpers/eve.ts`.
@@ -32,7 +36,7 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 *   **Dependencies:** Node.js v18+, React 19, TailwindCSS v3.
 *   **Database Schema:**
     *   `eve_contracts`: Main contract data.
-    *   `eve_contract_audits`: (New) History of actions.
+    *   `eve_contract_audits`: History of actions.
     *   `eve_characters`: User session data.
 *   **Environment Variables:**
     *   `DISCORD_WEBHOOK_URL`: Required for notifications.

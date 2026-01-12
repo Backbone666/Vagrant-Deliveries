@@ -1,6 +1,6 @@
 # Vagrant Logistics (VGLGI)
 **Version:** 2.0.0
-**Last Updated:** 2026-01-11
+**Last Updated:** 2026-01-12
 
 ## About
 Vagrant Logistics (VGLGI) is a modernised freighting platform for EVE Online, based on the Mango Deliveries project. "Neutral Space Trucking since YC117.06.19".
