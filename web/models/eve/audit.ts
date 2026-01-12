@@ -56,7 +56,7 @@ export function init(db: Sequelize): void {
     }
   }, {
     sequelize: db,
-    tableName: 'eve_contract_audits',
+    tableName: "eve_contract_audits",
     updatedAt: false
   })
 }
@@ -64,7 +64,7 @@ export function init(db: Sequelize): void {
 export async function log(
   contractId: number,
   actor: { id: number, name: string },
-  action: EveContractAuditAttributes['action'],
+  action: EveContractAuditAttributes["action"],
   details?: string
 ): Promise<void> {
   await EveContractAudit.create({
@@ -79,6 +79,6 @@ export async function log(
 export function getHistory(contractId: number): Promise<EveContractAudit[]> {
   return EveContractAudit.findAll({
     where: { contractId },
-    order: [['timestamp', 'ASC']]
+    order: [["timestamp", "ASC"]]
   })
 }

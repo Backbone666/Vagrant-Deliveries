@@ -338,8 +338,8 @@ export function init(): void {
 
   router.get("/history", eveAuth, async function(req: Request, res: Response): Promise<void> {
     if (!req.session.character) {
-        res.sendStatus(403)
-        return
+      res.sendStatus(403)
+      return
     }
 
     const contracts = await contract.getAllFinalized(req.session.character.id)
