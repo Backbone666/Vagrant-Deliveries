@@ -1,6 +1,7 @@
 import { config } from "dotenv"
 config()
 
+import path from "path"
 import { init } from "./db.js"
 init()
 
@@ -46,6 +47,17 @@ Store.sync()
 
 controllersInit()
 app.use(router)
+
+if (process.env.NODE_ENV !== "dev") {
+  // In production (Docker), serve the React frontend build
+  const clientDistPath = path.join(__dirname, "../../client/dist")
+  app.use(express.static(clientDistPath))
+
+  // SPA Fallback: Any route not handled by API serves index.html
+  app.get("*", (req: Request, res: Response) => {
+    res.sendFile(path.join(clientDistPath, "index.html"))
+  })
+}
 
 app.locals.character = {}
 
