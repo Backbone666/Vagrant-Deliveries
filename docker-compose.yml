@@ -1,0 +1,54 @@
+services:
+  app:
+    build: .
+    container_name: vglgi-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - MYSQL_HOST=db
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - vglgi-network
+
+  db:
+    image: mysql:8.0
+    container_name: vglgi-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - vglgi-network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    container_name: vglgi-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - vglgi-network
+
+networks:
+  vglgi-network:
+    driver: bridge
+
+volumes:
+  db_data:
