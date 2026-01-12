@@ -26,6 +26,9 @@ Vagrant Logistics (VGLGI) is a modernised freighting platform for EVE Online, ba
    ```
    *Note: Ensure your `.env` file is properly configured with database credentials accessible from the container.*
 
+### Deployment (Production)
+For a complete production deployment using Docker Compose (App + Database + Nginx), please refer to the [Deployment Guide](GEMINI_DEPLOY.md).
+
 ## Environment variables
 ### Required
 - `EVE_CALLBACK` The URL to redirect to after the EVE SSO logs in the user, that has also been set in the EVE application configuration. This needs to use the same port as the react front-end.
