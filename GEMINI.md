@@ -1,97 +1,53 @@
 # Vagrant Logistics (VGLGI) - Project Context
 
-## Project Overview
-**Vagrant Logistics** (formerly Mango Deliveries) is a full-stack web application designed for EVE Online freighting services. It provides a platform for users to calculate shipping quotes (similar to PushX) and manage freight contracts. The application is tailored for "Neutral Space Trucking" services covering HighSec, LowSec, Providence, Zarzakh, and Thera routes.
+## Current Project State
+The application is a dockerised full-stack solution for EVE Online freighting. It features a Node.js/Express backend handling EVE SSO, ESI integration, and business logic, paired with a React 19/Vite frontend.
 
-The project consists of a **Node.js/Express backend** that handles EVE SSO authentication, ESI API integration, and pricing logic, coupled with a modern **React/Vite frontend** for the user interface.
+**Active Services:**
+*   **App Service:** Node.js backend (serving API + static frontend in production).
+*   **Database:** MySQL 8.0 (Sequelize ORM).
+*   **Proxy:** Nginx (Reverse proxy, header management).
 
-## Tech Stack
+**Key Features Implemented:**
+*   **Authentication:** EVE Online SSO (OAuth2).
+*   **Pricing Engine:** Automated quote calculation based on Route Security, Volume, and Collateral (PushX-style).
+*   **Contract Management:** Submission, Tracking, and History.
+*   **Audit System:** Immutable logs for all contract actions.
+*   **Notifications:** Discord Webhooks for contract events.
+*   **Compliance:** GDPR/Privacy policy and CCP Legal Notices.
 
-### Frontend (`/client`)
-*   **Framework:** React 19 + TypeScript
-*   **Build Tool:** Vite
-*   **Styling:** Tailwind CSS (v3) + PostCSS
-*   **Key Dependencies:** `react-dom`
+## Recent Changes
+**Date:** 2026-01-11
+1.  **Compliance:** Added `LEGAL.md` and `PRIVACY.md` to satisfy CCP Games third-party requirements.
+2.  **Audit Logs:** Implemented `EveContractAudit` model and logging hooks in `web/controllers/eve.ts` and `web/helpers/eve.ts`.
+3.  **Discord Integration:** Added `web/helpers/discord.ts` and integrated webhook notifications for new contracts and status changes.
+4.  **API Expansion:** Added `/history` endpoint for user contract history.
 
-### Backend (`/`)
-*   **Runtime:** Node.js (>=18.0.0)
-*   **Framework:** Express.js
-*   **Database:** MySQL (via Sequelize ORM)
-*   **External APIs:**
-    *   **EVE SSO:** Authentication (OAuth2)
-    *   **EVE ESI:** Universe data (System IDs, Route calculation)
-*   **Key Dependencies:** `axios` (HTTP requests), `moment-timezone`, `helmet`, `morgan`
+## Architecture Decisions
+*   **Monolithic Docker Image:** We use a multi-stage build to compile both Frontend and Backend into a single Node.js container (`node:20-alpine`). **Rationale:** Simplifies deployment; Nginx handles public traffic, Node handles API + Static files.
+*   **Sequelize for Audit Logs:** Chosen over a simple file logger or NoSQL to ensure relational integrity with the `Contracts` and `Characters` tables.
+*   **Axios Migration:** Completely replaced `request-promise` to modernize the HTTP stack and improve type safety.
 
-## Project Structure
+## Technical Details
+*   **Dependencies:** Node.js v18+, React 19, TailwindCSS v3.
+*   **Database Schema:**
+    *   `eve_contracts`: Main contract data.
+    *   `eve_contract_audits`: (New) History of actions.
+    *   `eve_characters`: User session data.
+*   **Environment Variables:**
+    *   `DISCORD_WEBHOOK_URL`: Required for notifications.
+    *   `EVE_CALLBACK`: Must match the Docker ingress URL (e.g., `http://localhost/callback` or `https://domain.com/callback`).
 
-```text
-├── bin/                # Server entry point (www.ts)
-├── client/             # Frontend React Application
-│   ├── public/         # Static assets
-│   ├── src/            # Frontend source code
-│   │   ├── components/ # React components
-│   │   └── App.tsx     # Main application component (Calculator UI)
-│   └── vite.config.ts  # Vite configuration (includes API proxy)
-├── web/                # Backend Source Code
-│   ├── controllers/    # Route handlers (Auth, Quotes, Contracts)
-│   ├── env/            # Environment variable configuration
-│   ├── helpers/        # Utility logic (ESI, Pricing, Validation)
-│   ├── middlewares/    # Express middlewares (Auth check)
-│   └── models/         # Sequelize Database Models
-├── package.json        # Root dependencies & scripts
-└── .env                # Environment variables (EVE_ID, EVE_SECRET, DB config)
-```
+## Known Issues & Limitations
+*   **Frontend Calculator:** The UI component (`App.tsx`) currently calculates quotes via API but needs full form integration to pre-fill the submission page.
+*   **Admin UI:** While the backend supports Director/Admin actions, a dedicated frontend for viewing Audit Logs is not yet implemented.
+*   **Validation:** Input validation exists but could be strengthened with a dedicated schema library (Zod/Joi).
 
-## Building and Running
+## Next Steps
+1.  **Frontend Integration:** Connect the Calculator UI to the `/submit` endpoint logic more tightly.
+2.  **Admin Dashboard:** Build the React view for Directors to see Audit Logs.
+3.  **Production Hardening:** Review Nginx headers and SSL configuration (Certbot).
 
-### Prerequisites
-*   Node.js v18+
-*   MySQL Database
-
-### Installation
-1.  **Install Root Dependencies:**
-    ```bash
-    npm install
-    ```
-2.  **Install Client Dependencies:**
-    ```bash
-    cd client && npm install
-    ```
-
-### Development
-To run both the Backend (port 3001) and Frontend (port 5173) concurrently:
-```bash
-npm run dev
-```
-*   The Frontend proxies API requests (`/quote`, `/login`, etc.) to `http://localhost:3001`.
-
-### Production Build
-To compile TypeScript for the backend and build the React frontend:
-```bash
-npm run build
-```
-
-## Key Logic & Conventions
-
-### Pricing Engine (`web/helpers/pricing.ts`)
-*   **Route Calculation:** Uses EVE ESI to calculate jumps between Origin and Destination.
-*   **Security Logic:**
-    *   `HighSec`: Rate based on volume (DST vs Freighter vs JF).
-    *   `Providence`: Special flat rate per jump + 2% collateral.
-    *   `LowSec/Thera/Zarzakh`: Higher risk rates + 3% collateral.
-*   **Minimum Reward:** 4,500,000 ISK.
-
-### Authentication (`web/controllers/eve.ts`)
-*   Uses EVE Online SSO.
-*   Flow: User clicks Login -> Redirects to EVE -> Callback receives code -> Backend exchanges code for token -> Creates Session.
-*   **Note:** Legacy `request-promise` has been replaced with `axios`.
-
-### Database
-*   Uses Sequelize ORM.
-*   Models are defined in `web/models/eve/`.
-*   Session storage is handled via `connect-session-sequelize`.
-
-## Contribution Guidelines
-*   **Style:** Follow the existing TypeScript conventions (Strict typing preferred).
-*   **Frontend:** Use Tailwind CSS for styling; avoid plain CSS files where possible.
-*   **API:** All backend API calls should be typed and use `axios`.
+## Important Notes
+*   **ESI Compliance:** We must ensure we do not cache ESI data longer than allowed headers permit.
+*   **Security:** `EVE_DELIVERIES_SESSION_SECRET` must be rotated in production.
