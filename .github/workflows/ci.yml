@@ -1,0 +1,56 @@
+name: CI - Quality & Testing
+
+on:
+  push:
+    branches: [ "master", "main", "VGLGI" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  quality:
+    name: Lint & Build Check
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    # Backend Setup
+    - name: Install Backend Dependencies
+      run: npm ci
+
+    # Frontend Setup
+    - name: Install Frontend Dependencies
+      working-directory: ./client
+      run: npm ci
+
+    # Linting
+    - name: Lint Backend
+      run: npm run lint
+      continue-on-error: true # Don't fail build on lint warnings for now
+
+    - name: Lint Frontend
+      working-directory: ./client
+      run: npm run lint
+      continue-on-error: true
+
+    # Type Checking (Crucial for EVE data structures)
+    - name: Type Check Backend
+      run: npm run tsc
+
+    - name: Type Check Frontend
+      working-directory: ./client
+      run: npm run build # Vite build performs TSC check
+
+    # Build Verification
+    - name: Verify Full Build
+      run: npm run build
