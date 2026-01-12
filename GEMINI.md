@@ -18,7 +18,7 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 
 ## Recent Changes
 **Date:** 2026-01-12
-1.  **CI Fixes**: Resolved significant linting failures in GitHub Actions related to indentation (2 spaces required), quote consistency (double quotes required), and explicit `any` types (forbidden by TS rules).
+1.  **CI Fixes**: Resolved significant linting failures in GitHub Actions related to indentation (2 spaces required), quote consistency (double quotes required), and explicit `any` types (forbidden by TS rules). This included fixing `web/helpers/discord.ts`, `web/models/eve/audit.ts`, and `web/controllers/eve.ts`.
 2.  **Infrastructure**: Finalized GitHub Actions workflows for CI, Security, Docker Publishing, and Deployment.
 
 **Date:** 2026-01-11
