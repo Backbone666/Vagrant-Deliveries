@@ -14,6 +14,8 @@ import { isUri } from "valid-url"
 import { ParsedQs } from "qs"
 import { Alert, DirectorDestinationsBody, DirectorSettingsBody } from "../controllers/eve.js"
 import { Request } from "express"
+import * as audit from "../models/eve/audit.js"
+import { discord } from "./discord.js"
 
 export interface AppraisalResponse {
   invalid: {
@@ -256,6 +258,11 @@ export const contracts = {
       oldContract.freighterId = req.session.character?.id
       oldContract.freighterName = req.session.character?.characterName
       contract.set(oldContract)
+
+      if (req.session.character) {
+        await audit.log(oldContract.id, { id: req.session.character.id, name: req.session.character.characterName }, "accept")
+        await discord.notifyStatusChange(oldContract.id, "ongoing", req.session.character.characterName)
+      }
     }
   },
 
@@ -282,6 +289,11 @@ export const contracts = {
 
       oldContract.status = "completed"
       contract.set(oldContract)
+
+      if (req.session.character) {
+        await audit.log(oldContract.id, { id: req.session.character.id, name: req.session.character.characterName }, "complete")
+        await discord.notifyStatusChange(oldContract.id, "completed", req.session.character.characterName)
+      }
     }
   },
 

@@ -6,6 +6,8 @@ import * as destination from "../models/eve/destinations.js"
 import { eveAuth } from "../middlewares/eve.js"
 import * as eveHelpers from "../helpers/eve.js"
 import { pricing } from "../helpers/pricing.js"
+import * as audit from "../models/eve/audit.js"
+import { discord } from "../helpers/discord.js"
 import { Request, Response, Router } from "express"
 import * as invmarketgroups from "../models/eve/invmarketgroups.js"
 import * as invtypes from "../models/eve/invtypes.js"
@@ -288,7 +290,7 @@ export function init(): void {
     const multiplier = req.body.multiplier || 1
     const volume = appraisal.totals.volume
 
-    contract.set({
+    const createdContract = await contract.set({
       link: link,
       destination: destination,
       value: price * multiplier,
@@ -309,9 +311,39 @@ export function init(): void {
       status: "pending"
     })
 
+    const newContract = createdContract[0]
+
+    // Audit Log
+    await audit.log(
+      newContract.id,
+      { id: req.session.character.id, name: req.session.character.characterName },
+      "create",
+      `Volume: ${volume}, Reward: ${newContract.quote}`
+    )
+
+    // Discord Notification
+    await discord.notifyNewContract({
+      origin: "Jita", // Default for now
+      destination: destination,
+      volume: volume * multiplier,
+      reward: newContract.quote,
+      collateral: price * multiplier,
+      link: link
+    }, req.session.character.characterName)
+
     res.status(200).json({
       alert: "Contract submitted. Click here to see it."
     })
+  })
+
+  router.get("/history", eveAuth, async function(req: Request, res: Response): Promise<void> {
+    if (!req.session.character) {
+        res.sendStatus(403)
+        return
+    }
+
+    const contracts = await contract.getAllFinalized(req.session.character.id)
+    res.json(contracts)
   })
 
   router.get("/contracts", eveAuth, async function(req: Request, res: Response): Promise<void> {

@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize/types"
+import { Sequelize } from "sequelize"
 import * as alliance from "./alliance.js"
 import * as character from "./character.js"
 import * as contract from "./contract.js"
@@ -8,8 +8,9 @@ import * as invmarketgroups from "./invmarketgroups.js"
 import * as invtypes from "./invtypes.js"
 import * as invvolumes from "./invvolumes.js"
 import * as settings from "./settings.js"
+import * as audit from "./audit.js"
 
-export { alliance, character, contract, corporation, destinations, invmarketgroups, invtypes, invvolumes, settings }
+export { alliance, character, contract, corporation, destinations, invmarketgroups, invtypes, invvolumes, settings, audit }
 
 import * as models from "./index.js"
 
