@@ -6,12 +6,25 @@
 Vagrant Logistics (VGLGI) is a modernised freighting platform for EVE Online, based on the Mango Deliveries project. "Neutral Space Trucking since YC117.06.19".
 
 ## Setup
+
+### Standard Installation
 1. Clone this repository.
 2. Run `npm install`
 3. Go to https://developers.eveonline.com/ and create an application.
 4. Set "Connection Type" to "Authentication Only" and "Callback URL" to the url that users will be redirected to after login (locally `http://localhost:5173/callback` for development).
 5. Create a .env file at the root of the project that sets the required environment variables below (see .env.example).
-4. Run `npm run dev` to run both the express back-end and Vite front-end.
+6. Run `npm run dev` to run both the express back-end and Vite front-end.
+
+### Docker
+1. Build the image:
+   ```bash
+   docker build -t vagrant-logistics .
+   ```
+2. Run the container:
+   ```bash
+   docker run -p 3000:3000 --env-file .env vagrant-logistics
+   ```
+   *Note: Ensure your `.env` file is properly configured with database credentials accessible from the container.*
 
 ## Environment variables
 ### Required
