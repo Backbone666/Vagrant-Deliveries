@@ -21,3 +21,7 @@ dist/
 # React
 build/
 job-logs.txt
+
+.gemini/
+gha-creds-*.json
+logs_54195370568.zip
