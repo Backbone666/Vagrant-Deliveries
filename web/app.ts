@@ -17,6 +17,7 @@ import session from "express-session"
 import sequelizeSession from "connect-session-sequelize"
 import { db } from "../web/db.js"
 import { HTTPStatusCodes } from "./index.js"
+import rateLimit from "express-rate-limit"
 
 app.use(cookieParser(env("EVE_DELIVERIES_SESSION_SECRET")))
 app.use(helmet({
@@ -24,6 +25,17 @@ app.use(helmet({
     reportOnly: true
   }
 }))
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter)
+
 app.set("trust proxy", 1)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

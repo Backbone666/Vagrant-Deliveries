@@ -126,7 +126,7 @@ export function getBanned(): Promise<EveBannedCharacters[]> {
 }
 
 export function getByName(name: string): Promise<EveCharacters | null> {
-  return EveCharacters.findOne({ where: { [name]: name } })
+  return EveCharacters.findOne({ where: { characterName: name } })
 }
 
 export function getByToken(token: string): Promise<EveCharacters | null> {
