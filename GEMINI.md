@@ -17,6 +17,11 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 *   **Compliance:** GDPR/Privacy policy and CCP Legal Notices.
 
 ## Recent Changes
+**Date:** 2026-01-13
+1.  **Security Audit:** Fixed a SQL injection vulnerability in `web/models/eve/character.ts` where character lookups used dynamic keys.
+2.  **Rate Limiting:** Implemented `express-rate-limit` in `web/app.ts` to mitigate brute-force and DoS risks.
+3.  **Performance:** Verified that Sequelize models use denormalization for frequently accessed data (character names in contracts) to prevent N+1 query issues.
+
 **Date:** 2026-01-12
 1.  **Cleanup:** Removed legacy `.travis.yml` configuration.
 2.  **CI Fixes**: Resolved significant linting failures in GitHub Actions related to indentation (2 spaces required), quote consistency (double quotes required), and explicit `any` types (forbidden by TS rules). This included fixing `web/helpers/discord.ts`, `web/models/eve/audit.ts`, and `web/controllers/eve.ts`.
