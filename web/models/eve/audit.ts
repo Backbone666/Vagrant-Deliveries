@@ -10,7 +10,7 @@ export interface EveContractAuditAttributes {
   timestamp: Date
 }
 
-export interface EveContractAuditCreationAttributes extends Optional<EveContractAuditAttributes, "id" | "timestamp"> {}
+export type EveContractAuditCreationAttributes = Optional<EveContractAuditAttributes, "id" | "timestamp">
 
 class EveContractAudit extends Model<EveContractAuditAttributes, EveContractAuditCreationAttributes> implements EveContractAuditAttributes {
   id!: number

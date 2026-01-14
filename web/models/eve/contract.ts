@@ -25,8 +25,7 @@ export interface EveContractsAttributes {
   taxed?: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EveContractsCreationAttributes extends Optional<EveContractsAttributes, "id"> {}
+export type EveContractsCreationAttributes = Optional<EveContractsAttributes, "id">
 
 class EveContracts extends Model<EveContractsAttributes, EveContractsCreationAttributes> implements EveContractsAttributes {
   id!: number

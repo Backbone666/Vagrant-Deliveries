@@ -17,6 +17,11 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 *   **Compliance:** GDPR/Privacy policy and CCP Legal Notices.
 
 ## Recent Changes
+**Date:** 2026-01-14
+1.  **Dependency Upgrade:** Upgraded `eslint` to v9 and migrated to the new Flat Config system (`eslint.config.mjs`).
+2.  **Deprecation Fixes:** Resolved warnings for `inflight` and `glob` (v7) by upgrading `rimraf` to v5 and switching to `typescript-eslint` v8.
+3.  **Code Quality:** Fixed several linting errors (empty interfaces) caught by the updated ruleset in Sequelize models.
+
 **Date:** 2026-01-13
 1.  **Security Audit:** Fixed a SQL injection vulnerability in `web/models/eve/character.ts` where character lookups used dynamic keys.
 2.  **Rate Limiting:** Implemented `express-rate-limit` in `web/app.ts` to mitigate brute-force and DoS risks.
@@ -37,6 +42,7 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 *   **Monolithic Docker Image:** We use a multi-stage build to compile both Frontend and Backend into a single Node.js container (`node:20-alpine`). **Rationale:** Simplifies deployment; Nginx handles public traffic, Node handles API + Static files.
 *   **Sequelize for Audit Logs:** Chosen over a simple file logger or NoSQL to ensure relational integrity with the `Contracts` and `Characters` tables.
 *   **Axios Migration:** Completely replaced `request-promise` to modernize the HTTP stack and improve type safety.
+*   **ESLint 9 Flat Config:** Migrated the entire project (root and client) to ESLint 9's Flat Config system for consistent linting across the monorepo.
 
 ## Technical Details
 *   **Dependencies:** Node.js v18+, React 19, TailwindCSS v3.
