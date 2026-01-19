@@ -4,7 +4,8 @@
  * Module dependencies.
  */
 
-import app from "../web/app.js"
+import app from "../web/app"
+import { init as dbInit } from "../web/db"
 import debugLib from "debug"
 import { createServer } from "http"
 
@@ -27,9 +28,19 @@ const server = createServer(app)
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port)
-server.on("error", onError)
-server.on("listening", onListening)
+async function startServer() {
+  try {
+    await dbInit()
+    server.listen(port)
+    server.on("error", onError)
+    server.on("listening", onListening)
+  } catch (error) {
+    console.error("Failed to start server:", error)
+    process.exit(1)
+  }
+}
+
+startServer()
 
 /**
  * Normalize a port into a number, string, or false.

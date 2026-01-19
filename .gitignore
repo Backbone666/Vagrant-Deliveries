@@ -25,3 +25,5 @@ job-logs.txt
 .gemini/
 gha-creds-*.json
 logs_54195370568.zip
+*.sqlite
+data/
