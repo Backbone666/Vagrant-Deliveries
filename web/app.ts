@@ -2,21 +2,20 @@ import { config } from "dotenv"
 config()
 
 import path from "path"
-import { init } from "./db.js"
-init()
+import { init } from "./db"
 
 import express, { Response, Request, NextFunction } from "express"
 const app = express()
 
 import helmet from "helmet"
 import morgan from "morgan"
-import { router, init as controllersInit } from "./controllers/index.js"
+import { router, init as controllersInit } from "./controllers"
 import cookieParser from "cookie-parser"
-import { env } from "./env/index.js"
+import { env } from "./env"
 import session from "express-session"
 import sequelizeSession from "connect-session-sequelize"
-import { db } from "../web/db.js"
-import { HTTPStatusCodes } from "./index.js"
+import { db } from "../web/db"
+import { HTTPStatusCodes } from "./index"
 import rateLimit from "express-rate-limit"
 
 app.use(cookieParser(env("EVE_DELIVERIES_SESSION_SECRET")))
