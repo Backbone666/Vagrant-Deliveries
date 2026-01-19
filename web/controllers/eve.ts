@@ -177,7 +177,7 @@ export function init(): void {
     res.status(200).json({
       character: req.session.character || {},
       destinations: await destination.getAll(),
-      title: "Home - Mango Deliveries",
+      title: "Home - Vagrant Logistics",
       active: "Home"
     })
   })
@@ -372,7 +372,7 @@ export function init(): void {
       finalizedContracts: finalized,
       director: req.session.character.director,
       freighter: freighter,
-      title: "Contracts - Mango Deliveries",
+      title: "Contracts - Vagrant Logistics",
       active: "Contracts"
     })
   })
@@ -425,7 +425,7 @@ export function init(): void {
 
     res.status(200).json({
       character: req.session.character || {},
-      title: "Director Panel - Mango Deliveries",
+      title: "Director Panel - Vagrant Logistics",
       active: "Director Panel",
       bannedUsers: bannedUsers,
       freighters: freighters,

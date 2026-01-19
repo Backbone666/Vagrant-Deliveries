@@ -17,6 +17,14 @@ The application is a dockerised full-stack solution for EVE Online freighting. I
 *   **Compliance:** GDPR/Privacy policy and CCP Legal Notices.
 
 ## Recent Changes
+**Date:** 2026-01-19
+1.  **Rebranding:** Completed comprehensive migration from "Mango Deliveries" to "Vagrant-Deliveries".
+    *   Updated project metadata in `package.json` and `client/index.html`.
+    *   Refactored `web/controllers/eve.ts` and `web/app.ts` to reflect new branding in UI titles and session handling.
+    *   Rewrote `README.md` and updated deployment docs (`GEMINI_DEPLOY.md`).
+2.  **Documentation:** Verified `LEGAL.md` and `PRIVACY.md` compliance.
+3.  **Cleanup:** Verified removal of deprecated files and ensured clean linting state.
+
 **Date:** 2026-01-14
 1.  **Dependency Upgrade:** Upgraded `eslint` to v9 and migrated to the new Flat Config system (`eslint.config.mjs`).
 2.  **Deprecation Fixes:** Resolved warnings for `inflight` and `glob` (v7) by upgrading `rimraf` to v5 and switching to `typescript-eslint` v8.

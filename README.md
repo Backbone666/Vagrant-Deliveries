@@ -3,7 +3,8 @@
 **Last Updated:** 2026-01-19
 
 ## About
-Vagrant Logistics (VGLGI) is a modernised freighting platform for EVE Online, based on the Mango Deliveries project. "Neutral Space Trucking since YC117.06.19".
+Vagrant Logistics (VGLGI) is a modernised freighting platform for EVE Online. "Neutral Space Trucking since YC117.06.19".
+Originally based on the legacy "Mango Deliveries" codebase, it has been significantly modernized and rebranded.
 
 ## Tech Stack
 - **Backend:** Node.js, Express, Sequelize ORM (MySQL/SQLite)
@@ -67,12 +68,3 @@ For a complete production deployment using Docker Compose (App + Database + Ngin
 - `MYSQL_PORT`: Database port (Default: 3306).
 - `NODE_ENV`: Set to `dev` for development, `production` otherwise.
 - `PORT`: Backend API port (Default: 3001).
-
-## Front Page
-![chrome_2ZLgNXFBtP](https://user-images.githubusercontent.com/10968691/129737164-52d5e8fc-2605-4a66-9cb3-3bb86e45fe0b.png)
-
-## Contracts
-![chrome_7uJ52AvTSK](https://user-images.githubusercontent.com/10968691/129737208-e37a1f5b-4972-463b-b00c-698b22eed163.png)
-
-## Director Panel
-![evedirectors](https://user-images.githubusercontent.com/10968691/129738840-081e2107-0f1b-47ce-b830-75e2d021cbaf.gif)

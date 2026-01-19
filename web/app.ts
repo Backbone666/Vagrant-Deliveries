@@ -2,7 +2,6 @@ import { config } from "dotenv"
 config()
 
 import path from "path"
-import { init } from "./db"
 
 import express, { Response, Request, NextFunction } from "express"
 const app = express()
@@ -46,7 +45,7 @@ const Store = new SequelizeStore({
 })
 
 app.use(session({
-  name: "mango deliveries",
+  name: "vagrant-deliveries",
   secret: env("EVE_DELIVERIES_SESSION_SECRET"),
   store: Store,
   resave: false,

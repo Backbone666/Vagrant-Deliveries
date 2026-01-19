@@ -12,7 +12,7 @@ This guide details how to deploy the Vagrant Logistics application using Docker 
 1.  **Clone the Repository**
     ```bash
     git clone <repository-url>
-    cd Mango-Deliveries
+    cd Vagrant-Deliveries
     ```
 
 2.  **Configure Environment**
@@ -66,7 +66,7 @@ This guide details how to deploy the Vagrant Logistics application using Docker 
 
 *   **Database Backup:**
     ```bash
-    docker exec vglgi-db mysqldump -u root -p<ROOT_PASSWORD> mango_deliveries > backup.sql
+    docker exec vglgi-db mysqldump -u root -p<ROOT_PASSWORD> vagrant_deliveries > backup.sql
     ```
 
 ## Troubleshooting

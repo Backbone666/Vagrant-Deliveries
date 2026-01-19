@@ -1,5 +1,5 @@
 {
-  "name": "mango-deliveries",
+  "name": "vagrant-deliveries",
   "version": "2.0.0",
   "description": "Vagrant Logistics - EVE Online freighting service",
   "engines": {
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DrSmugleaf/Mango-Deliveries.git"
+    "url": "https://github.com/Backbone666/Vagrant-Deliveries.git"
   },
   "author": "Vagrant Logistics",
   "license": "MIT",
