@@ -4,10 +4,10 @@
  * Module dependencies.
  */
 
-import app from "../web/app"
-import { init as dbInit } from "../web/db"
+import createApp from "../web/app"
+import { init as dbInit, db } from "../web/db"
 import debugLib from "debug"
-import { createServer } from "http"
+import { createServer, Server } from "http"
 
 const debug = debugLib("express-test:server")
 
@@ -16,13 +16,12 @@ const debug = debugLib("express-test:server")
  */
 
 const port = normalizePort(process.env.PORT || "3001")
-app.set("port", port)
 
 /**
  * Create HTTP server.
  */
 
-const server = createServer(app)
+let server: Server
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -31,6 +30,9 @@ const server = createServer(app)
 async function startServer() {
   try {
     await dbInit()
+    const app = await createApp(db)
+    app.set("port", port)
+    server = createServer(app)
     server.listen(port)
     server.on("error", onError)
     server.on("listening", onListening)
