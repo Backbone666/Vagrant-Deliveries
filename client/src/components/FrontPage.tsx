@@ -16,15 +16,18 @@ interface EveData {
     destinations: EveDestinations[]
 }
 
-function renderDestination(first: boolean, destination: EveDestinations, onClick: MouseEventHandler<HTMLDivElement>) {
-    return <div className={first ? "col-md-2 col-md-offset-3" : "col-md-2"} onClick={onClick}>
+function renderDestination(first: boolean, destination: EveDestinations, onClick: MouseEventHandler<HTMLButtonElement>) {
+    return <button
+        className={`${first ? "col-md-2 col-md-offset-3" : "col-md-2"} unstyled-button`}
+        onClick={onClick}
+    >
         <div className="panel panel-default">
             <div className="panel-heading">{destination.name}</div>
             <div className="panel-body destination-image">
-                <img className="img-responsive center-block" src={destination.image} width="100%"></img>
+                <img className="img-responsive center-block" src={destination.image} width="100%" alt={destination.name} />
             </div>
         </div>
-    </div>
+    </button>
 }
 
 export default function FrontPage(): JSX.Element {
