@@ -33,6 +33,10 @@ html, body, #root {
   padding: 0px;
 }
 
+.destination-image:hover {
+  cursor: pointer;
+}
+
 .character-image {
   height: 50px;
 }
@@ -63,6 +67,12 @@ html, body, #root {
 .loader-text:after {
   content: 'Loading';
   animation: load 2s linear infinite;
+}
+
+.unstyled-button {
+  border: none;
+  background: none;
+  padding: 0;
 }
 
 @keyframes spin {
