@@ -8,6 +8,7 @@ import * as eveHelpers from "../helpers/eve.js"
 import { pricing } from "../helpers/pricing.js"
 import * as audit from "../models/eve/audit.js"
 import { discord } from "../helpers/discord.js"
+import { ntfy } from "../helpers/ntfy.js"
 import { Request, Response, Router } from "express"
 import * as invmarketgroups from "../models/eve/invmarketgroups.js"
 import * as invtypes from "../models/eve/invtypes.js"
@@ -323,6 +324,16 @@ export function init(): void {
 
     // Discord Notification
     await discord.notifyNewContract({
+      origin: "Jita", // Default for now
+      destination: destination,
+      volume: volume * multiplier,
+      reward: newContract.quote,
+      collateral: price * multiplier,
+      link: link
+    }, req.session.character.characterName)
+
+    // ntfy Notification
+    await ntfy.notifyNewContract({
       origin: "Jita", // Default for now
       destination: destination,
       volume: volume * multiplier,

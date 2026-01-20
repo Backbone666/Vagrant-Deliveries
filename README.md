@@ -63,8 +63,11 @@ For a complete production deployment using Docker Compose (App + Database + Ngin
 ### Optional
 - `DB_CONNECTION`: Database dialect to use. Options: `mysql` (default), `sqlite`.
 - `DEBUG`: Set to `express-session` for debug output.
+- `DISCORD_WEBHOOK_URL`: The Discord webhook URL for notifications.
 - `MYSQL_CONNECTION_LIMIT`: Max DB connections (Default: 10).
 - `MYSQL_HOST`: Database hostname (Default: `localhost`).
 - `MYSQL_PORT`: Database port (Default: 3306).
 - `NODE_ENV`: Set to `dev` for development, `production` otherwise.
+- `NTFY_TOPIC`: The ntfy topic to send notifications to.
+- `NTFY_URL`: The URL of the ntfy server.
 - `PORT`: Backend API port (Default: 3001).
