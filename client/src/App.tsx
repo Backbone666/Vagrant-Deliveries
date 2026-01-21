@@ -103,9 +103,10 @@ function App() {
                 {/* Left Column: Locations */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Pickup Location</label>
+                    <label htmlFor="origin" className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Pickup Location</label>
                     <div className="relative">
                       <input
+                        id="origin"
                         type="text"
                         className="block w-full pl-4 pr-3 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 text-white placeholder-slate-500 transition-all outline-none"
                         value={origin}
@@ -115,9 +116,10 @@ function App() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Destination</label>
+                    <label htmlFor="destination" className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Destination</label>
                     <div className="relative">
                       <input
+                        id="destination"
                         type="text"
                         className="block w-full pl-4 pr-3 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 text-white placeholder-slate-500 transition-all outline-none"
                         value={destination}
@@ -127,8 +129,9 @@ function App() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Service Type</label>
+                    <label htmlFor="routeType" className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Service Type</label>
                     <select
+                      id="routeType"
                       className="block w-full pl-4 pr-10 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 text-white transition-all outline-none appearance-none"
                       value={routeType}
                       onChange={(e) => setRouteType(e.target.value)}
@@ -145,9 +148,10 @@ function App() {
                 {/* Right Column: Cargo Details */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Volume (m³)</label>
+                    <label htmlFor="volume" className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Volume (m³)</label>
                     <div className="relative">
                       <input
+                        id="volume"
                         type="number"
                         className="block w-full pl-4 pr-3 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 text-white placeholder-slate-500 transition-all outline-none"
                         placeholder="0"
@@ -160,9 +164,10 @@ function App() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Collateral (ISK)</label>
+                    <label htmlFor="collateral" className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Collateral (ISK)</label>
                     <div className="relative">
                       <input
+                        id="collateral"
                         type="number"
                         className="block w-full pl-4 pr-3 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 text-white placeholder-slate-500 transition-all outline-none"
                         placeholder="0"
