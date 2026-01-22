@@ -33,6 +33,30 @@ function renderDestination(first: boolean, destination: EveDestinations, onClick
 export default function FrontPage(): JSX.Element {
     const [data, setData] = useState<EveData>()
     const [destination, setDestination] = useState<string>("")
+    const [isSubmitting, setSubmitting] = useState(false)
+    const [alert, setAlert] = useState<{ type: 'success' | 'danger', message: string } | null>(null);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setSubmitting(true);
+
+        const formData = new FormData(event.currentTarget);
+        const response = await fetch('/submit', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (response.ok) {
+            setAlert({ type: 'success', message: 'Contract submitted successfully!' });
+            event.currentTarget.reset();
+            setDestination("");
+        } else {
+            const error = await response.json().catch(() => ({ message: 'An unknown error occurred.' }));
+            setAlert({ type: 'danger', message: error.message || 'An error occurred while submitting the contract.' });
+        }
+
+        setSubmitting(false);
+    }
 
     useEffect(() => {
         const fetchData = async () => await fetchJson("/index", setData)
@@ -49,9 +73,16 @@ export default function FrontPage(): JSX.Element {
         </div>
         <div className="container text-center">
             <div className="col-md-6 col-md-offset-3">
-                <div id="submit-alert" className="alert" role="alert"/>
+                {alert && (
+                    <div className={`alert alert-${alert.type} alert-dismissible`} role="alert">
+                        {alert.message}
+                        <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={() => setAlert(null)}>
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                )}
             </div>
-            <form method="post" action="/submit">
+            <form onSubmit={handleSubmit}>
                 <div className="row">
                     {data.destinations.map((value: EveDestinations, index: number) => {
                         if (index % 3 === 0) {
@@ -113,7 +144,9 @@ export default function FrontPage(): JSX.Element {
                                         </div>
                                     </div>
                                     <div className="form-group">
-                                        <button type="submit" className="btn btn-primary">Create Contract</button>
+                                        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                                            {isSubmitting ? 'Submitting...' : 'Create Contract'}
+                                        </button>
                                     </div>
                                 </div>
                             </div>

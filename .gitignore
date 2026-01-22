@@ -7,6 +7,7 @@ npm-debug.log*
 *.dev
 .DS_Store
 app.log
+dev_server.log
 
 # Docker
 Dockerfile
