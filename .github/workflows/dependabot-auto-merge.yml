@@ -1,0 +1,84 @@
+name: Dependabot Automation
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  dependabot-handler:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1.6.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (Root)
+        run: npm ci
+
+      - name: Build Server
+        run: npm run build
+
+      - name: Install dependencies (Client)
+        working-directory: ./client
+        run: npm ci
+
+      - name: Run Client Tests
+        id: tests
+        working-directory: ./client
+        run: npm test -- --watchAll=false
+
+      - name: Comment Test Results
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          OUTCOME: ${{ steps.tests.outcome }}
+        run: |
+          if [ "$OUTCOME" == "success" ]; then
+            EMOJI="✅"
+            MSG="Tests passed successfully."
+          else
+            EMOJI="❌"
+            MSG="Tests failed. Automatic merge disabled."
+          fi
+          
+          gh pr comment "$PR_URL" --body "$EMOJI **Automated Check Result:** $MSG"
+
+      - name: Handle Major Update
+        if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-major' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr edit "$PR_URL" --add-label "major-update,requires-review"
+          gh pr comment "$PR_URL" --body "⚠️ This is a MAJOR update. Manual review is required before merging."
+
+      - name: Handle Minor/Patch Update
+        if: ${{ steps.tests.outcome == 'success' && (steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch') }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr edit "$PR_URL" --add-label "auto-merge"
+          gh pr review "$PR_URL" --approve --body "Auto-approved minor/patch update based on passing tests."
+          gh pr merge "$PR_URL" --auto --merge
