@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import FrontPage from './components/FrontPage';
@@ -10,38 +10,24 @@ import Forbidden from './components/Forbidden';
 import NotFound from './components/NotFound';
 import InternalError from './components/InternalError';
 import WithLogin from "./components/WithLogin";
-import { BrowserRouter, Switch, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!);
+
+root.render(
   <BrowserRouter>
-    <Switch>
-      <Route exact path="/">
-        <FrontPage />
-      </Route>
-      <Route exact path="/login">
-        <Login />
-      </Route>
-      <Route exact path="/callback">
-        <Callback />
-      </Route>
-      <Route exact path="/contracts">
-        <WithLogin page={<Contracts />} />
-      </Route>
-      <Route exact path="/director">
-        <WithLogin page={<Director />} />
-      </Route>
-      <Route exact path="/403">
-        <Forbidden />
-      </Route>
-      <Route exact path="/404">
-        <NotFound />
-      </Route>
-      <Route exact path="/500">
-        <InternalError />
-      </Route>
-    </Switch>
-  </BrowserRouter>,
-  document.getElementById('root')
+    <Routes>
+      <Route path="/" element={<FrontPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/callback" element={<Callback />} />
+      <Route path="/contracts" element={<WithLogin page={<Contracts />} />} />
+      <Route path="/director" element={<WithLogin page={<Director />} />} />
+      <Route path="/403" element={<Forbidden />} />
+      <Route path="/404" element={<NotFound />} />
+      <Route path="/500" element={<InternalError />} />
+    </Routes>
+  </BrowserRouter>
 );
 
 reportWebVitals();

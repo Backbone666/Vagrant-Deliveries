@@ -9,7 +9,7 @@ import { Request, Response, Router } from "express"
 import * as invmarketgroups from "../models/eve/invmarketgroups.js"
 import * as invtypes from "../models/eve/invtypes.js"
 import moment from "moment-timezone"
-import request from "request-promise"
+import axios from "axios"
 import * as settings from "../models/eve/settings.js"
 import crypto from "crypto"
 import { env } from "../env/index.js"
@@ -69,39 +69,39 @@ export function init(): void {
       return
     }
 
-    let body = await request.post({
-      headers: {
-        "Authorization": `Basic ${new Buffer(`${env("EVE_ID")}:${env("EVE_SECRET")}`).toString("base64")}`
-      },
-      url: "https://login.eveonline.com/oauth/token",
-      form: {
+    const { data: tokenData } = await axios.post(
+      "https://login.eveonline.com/oauth/token",
+      new URLSearchParams({
         "grant_type": "authorization_code",
-        "code": req.query.code
+        "code": req.query.code as string
+      }),
+      {
+        headers: {
+          "Authorization": `Basic ${Buffer.from(`${env("EVE_ID")}:${env("EVE_SECRET")}`).toString("base64")}`,
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
       }
-    })
+    )
 
-    body = JSON.parse(body)
-    const token = body.access_token
+    const token = tokenData.access_token
 
-    body = await request.get({
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      url: "https://login.eveonline.com/oauth/verify"
-    })
+    const { data: verifyData } = await axios.get(
+      "https://login.eveonline.com/oauth/verify",
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    )
 
-    body = JSON.parse(body)
-    const id = body.CharacterID
+    const id = verifyData.CharacterID
 
-    body = await Promise.all([
-      request.get(`https://esi.evetech.net/latest/characters/${body.CharacterID}/`),
-      request.get(`https://esi.evetech.net/latest/characters/${body.CharacterID}/portrait/`)
+    const responses = await Promise.all([
+      axios.get(`https://esi.evetech.net/latest/characters/${id}/`),
+      axios.get(`https://esi.evetech.net/latest/characters/${id}/portrait/`)
     ])
 
-    for (const index in body) {
-      const currentBody = body[index]
-      body[index] = JSON.parse(currentBody)
-    }
+    let body = responses.map(r => r.data)
 
     const name = body[0].name
     const portrait = body[1].px64x64.replace(/^http:\/\//i, "https://")
@@ -110,22 +110,19 @@ export function init(): void {
     const corporationId = body[0].corporation_id
 
     if (allianceId === undefined) {
-      body = await Promise.all([
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`)
+      const responses = await Promise.all([
+        axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
+        axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`)
       ])
+      body = responses.map(r => r.data)
     } else {
-      body = await Promise.all([
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
-        request.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`),
-        request.get(`https://esi.evetech.net/latest/alliances/${allianceId}/`),
-        request.get(`https://esi.evetech.net/latest/alliances/${allianceId}/icons/`)
+      const responses = await Promise.all([
+        axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/`),
+        axios.get(`https://esi.evetech.net/latest/corporations/${corporationId}/icons/`),
+        axios.get(`https://esi.evetech.net/latest/alliances/${allianceId}/`),
+        axios.get(`https://esi.evetech.net/latest/alliances/${allianceId}/icons/`)
       ])
-    }
-
-    for (const index in body) {
-      const currentBody = body[index]
-      body[index] = JSON.parse(currentBody)
+      body = responses.map(r => r.data)
     }
 
     const corporationName = body[0].name
