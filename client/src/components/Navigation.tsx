@@ -53,15 +53,15 @@ export default function Navigation(props: NavigationProps) {
                             <a href="/login">{character.characterName}</a>
                         </li>
                         <li key="images">
-                            <img src={character.characterPortrait} className="character-image"></img>
-                            <img src={character.corporationPortrait} className="character-image"></img>
-                            <img src={character.alliancePortrait} className="character-image"></img>
+                            <img src={character.characterPortrait} className="character-image" alt="Character Portrait"></img>
+                            <img src={character.corporationPortrait} className="character-image" alt="Corporation Portrait"></img>
+                            <img src={character.alliancePortrait} className="character-image" alt="Alliance Portrait"></img>
                         </li>
                     </> :
                     <form className="navbar-form navbar-right">
                         <div className="form-group">
                             <a href="/login">
-                                <img src="./evessobutton.png"></img>
+                                <img src="./evessobutton.png" alt="EVE SSO Login Button"></img>
                             </a>
                         </div>
                     </form>}
