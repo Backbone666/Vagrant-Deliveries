@@ -40,7 +40,19 @@ This unified plan combines the strategies for **Database Independence** (Dev Exp
     - [ ] Store `refresh_token` in the new DB column.
     - [ ] Implement background logic to refresh access tokens every 20 minutes.
 
-## Phase 4: Security & Infrastructure
+## Phase 4: Janice Integration (Appraisal Service)
+*Goal: Replace the defunct Evepraisal service with the Janice API for contract appraisal.*
+
+- [ ] **API Integration (`web/helpers/janice.ts`):**
+    - [ ] Create helper to interact with `https://janice.e-351.com/api/rest`.
+    - [ ] Implement appraisal logic (Market: Jita 4-4).
+    - [ ] Add `JANICE_API_KEY` to environment variables.
+- [ ] **Controller Updates:**
+    - [ ] Replace `evepraisal` calls with `Janice` helper calls in `web/controllers/eve.ts`.
+- [ ] **Validation:**
+    - [ ] Update input validation to accept Janice links/data.
+
+## Phase 5: Security & Infrastructure
 *Goal: Harden the application for production deployment.*
 
 - [ ] **ESI Protection:**
@@ -51,7 +63,8 @@ This unified plan combines the strategies for **Database Independence** (Dev Exp
 - [ ] **Session Security:**
     - [ ] Audit `cookie.secure` settings.
 
-## Phase 5: Verification & Success Criteria
+## Phase 6: Verification & Success Criteria
 - [ ] **Dev Environment:** Developer can run `npm run dev:sqlite` and interact with the full app (mock auth, contracts) without MySQL.
 - [ ] **Auth Persistence:** User remains logged in >20 mins (Refresh Token works).
 - [ ] **Data Integrity:** Long JWTs are stored correctly in both SQLite (Dev) and MySQL (Prod).
+- [ ] **Appraisals:** Contract prices are correctly calculated using Janice API.

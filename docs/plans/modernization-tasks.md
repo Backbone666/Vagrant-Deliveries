@@ -79,19 +79,35 @@ This document breaks down the [Modernization Initiative](./modernization-initiat
 
 ---
 
-## Phase 4: Security & Infrastructure
+## Phase 4: Janice Integration (Appraisal Service)
 
-### Task 4.1: Implement ESI Error Handling
+### Task 4.1: Implement Janice Helper
+**Objective:** Create a helper to interact with the Janice API.
+- Create `web/helpers/janice.ts`.
+- Implement function `getAppraisal(items: string[], market: string)`.
+- Use `JANICE_API_KEY` from environment variables.
+- Handle API errors gracefully.
+
+### Task 4.2: Replace Evepraisal Logic
+**Objective:** Switch appraisal source in controllers.
+- In `web/controllers/eve.ts` (and helpers), replace calls to Evepraisal with `Janice` helper.
+- Update `validateAppraisal` to handle Janice response format.
+
+---
+
+## Phase 5: Security & Infrastructure
+
+### Task 5.1: Implement ESI Error Handling
 **Objective:** Add ESI Rate Limit Protection.
 - Add Axios interceptor for `X-ESI-Error-Limit-Remain`.
 - Implement back-off logic if limit is low.
 
-### Task 4.2: Harden Content Security Policy (CSP)
+### Task 5.2: Harden Content Security Policy (CSP)
 **Objective:** Enforce strict Content Security Policy.
 - Update `helmet` config in `web/app.ts`.
 - Set `reportOnly: false`.
-- Whitelist `images.evetech.net` and `evepraisal.com`.
+- Whitelist `images.evetech.net`.
 
-### Task 4.3: Audit Session Security
+### Task 5.3: Audit Session Security
 **Objective:** Verify Session Security Settings.
 - Ensure `cookie.secure: true` in production.
