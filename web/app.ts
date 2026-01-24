@@ -20,7 +20,13 @@ import { HTTPStatusCodes } from "./index.js"
 app.use(cookieParser(env("EVE_DELIVERIES_SESSION_SECRET")))
 app.use(helmet({
   contentSecurityPolicy: {
-    reportOnly: true
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "ajax.googleapis.com", "maxcdn.bootstrapcdn.com"],
+      styleSrc: ["'self'", "maxcdn.bootstrapcdn.com"],
+      imgSrc: ["'self'", "i.imgur.com"],
+      connectSrc: ["'self'", "evepraisal.com"],
+    },
   }
 }))
 app.set("trust proxy", 1)

@@ -11,7 +11,7 @@ export function init(): void {
 
   router.use("/", eveRouter)
 
-  router.get("*", function(req, res) {
+  router.get(/.*/, function(req, res) {
     res.sendStatus(HTTPStatusCodes.NotFound)
   })
 }
