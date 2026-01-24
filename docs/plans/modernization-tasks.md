@@ -4,16 +4,17 @@ This document breaks down the [Modernization Initiative](./modernization-initiat
 
 ---
 
-## Phase 1: Foundation (Database Independence)
+## Phase 1: Foundation (Database Hybridization)
 
 ### Task 1.1: Install Dependencies & Setup Database Abstraction
-**Objective:** Implement SQLite support for database independence.
-- Install `sqlite3` as a dependency.
+**Objective:** Implement SQLite/Postgres support for database independence.
+- Remove `mysql2`.
+- Install `sqlite3` (Dev) and `pg` (Prod).
 - Modify `web/db.ts`:
   - Refactor `init()` to accept a `DB_TYPE` environment variable.
   - If `DB_TYPE` is 'sqlite', configure Sequelize to use `sqlite` dialect.
+  - If `DB_TYPE` is 'postgres', configure Sequelize to use `postgres` dialect with `DATABASE_URL`.
   - Set storage to `data/database.sqlite` for development and `:memory:` for testing.
-  - Preserve existing MySQL configuration as the default.
 
 ### Task 1.2: Implement Development Seeder
 **Objective:** Create a development seeder for SQLite.
@@ -83,6 +84,7 @@ This document breaks down the [Modernization Initiative](./modernization-initiat
 
 ### Task 4.1: Implement Janice Helper
 **Objective:** Create a helper to interact with the Janice API.
+- Docs: `https://janice.e-351.com/api/rest/docs/index.html`
 - Create `web/helpers/janice.ts`.
 - Implement function `getAppraisal(items: string[], market: string)`.
 - Use `JANICE_API_KEY` from environment variables.
