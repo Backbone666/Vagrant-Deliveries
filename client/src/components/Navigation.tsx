@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useState } from "react"
+import { useState, memo } from "react"
 import { EveCharacterAttributes } from "../../../web/models/eve/character"
 import fetchJson from "../fetch"
 
@@ -13,7 +13,10 @@ function isActive(active: boolean | undefined): string | undefined {
     return active ? "active" : undefined
 }
 
-export default function Navigation(props: NavigationProps) {
+// Bolt ⚡: Memoize the Navigation component to prevent unnecessary re-renders when props are unchanged.
+// This is a performance optimization that can reduce the number of times the component is re-rendered,
+// especially when its parent component has state that changes frequently.
+export default memo(function Navigation(props: NavigationProps) {
     const [character, setCharacter] = useState<EveCharacterAttributes>()
 
     useEffect(() => {
